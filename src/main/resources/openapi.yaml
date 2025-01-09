@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Client Management API
+  version: 1.0.0
+paths:
+  /clients:
+    post:
+      summary: Create a new client
+      operationId: createClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDto'
+      responses:
+        '201':
+          description: Client created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDto'
+        '400':
+          description: Invalid data
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Internal server error
+    get:
+      summary: Get all clients
+      operationId: getAllClients
+      responses:
+        '200':
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientDto'
+        '500':
+          description: Internal server error
+  /clients/metrics:
+    get:
+      summary: Get client metrics
+      operationId: getClientMetrics
+      responses:
+        '200':
+          description: Client metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MetricsDto'
+        '500':
+          description: Internal server error
+  /clients/{id}:
+    get:
+      summary: Get a client by ID
+      operationId: getClientById
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Client found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientDto'
+        '404':
+          description: Client not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update a client
+      operationId: updateClient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientDto'
+      responses:
+        '200':
+          description: Client updated
+        '400':
+          description: Invalid data
+        '404':
+          description: Client not found
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a client
+      operationId: deleteClient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Client deleted
+        '404':
+          description: Client not found
+        '500':
+          description: Internal server error
+  /clients/estimated-date:
+    get:
+      summary: Get all clients with estimated date
+      operationId: getClientsWithEstimatedDate
+      parameters:
+        - in: query
+          name: event
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: List of clients with estimated date
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientDto'
+        '400':
+          description: Invalid data
+        '500':
+          description: Internal server error
+components:
+  schemas:
+    ClientDto:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - age
+        - dateOfBirth
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstName:
+          type: string
+        lastName:
+          type: string
+        age:
+          type: integer
+        dateOfBirth:
+          type: string
+          format: date
+    MetricsDto:
+      type: object
+      properties:
+        averageAge:
+          type: number
+        standardDeviationAge:
+          type: number
