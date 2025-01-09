@@ -1,15 +1,23 @@
-# Usa una imagen oficial de OpenJDK como base
-FROM openjdk:17-jdk-slim
+# Etapa de compilación
+FROM gradle:7.5.1-jdk17 AS build
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Copia el JAR de tu aplicación al contenedor
-ARG JAR_FILE=build/libs/client-management-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} app.jar
+# Copia el código fuente al contenedor
+COPY . .
 
-# Expone el puerto en el que la aplicación se ejecutará
+# Compila la aplicación
+RUN gradle build --no-daemon
+
+# Etapa de ejecución
+FROM openjdk:17-jdk-slim
+
+# Copia el JAR de la aplicación desde la etapa de compilación
+COPY --from=build /app/build/libs/client-management-0.0.1-SNAPSHOT.jar app.jar
+
+# Expone el puerto 8080
 EXPOSE 8080
 
 # Define el comando para ejecutar la aplicación
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
