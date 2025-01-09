@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copia el JAR de tu aplicación al contenedor
-ARG JAR_FILE=build/libs/*.jar
+ARG JAR_FILE=build/libs/client-management-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 # Expone el puerto en el que la aplicación se ejecutará
